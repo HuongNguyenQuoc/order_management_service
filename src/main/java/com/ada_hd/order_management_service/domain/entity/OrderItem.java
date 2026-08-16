@@ -49,16 +49,19 @@ public class OrderItem {
 	private  Integer quantity;
 
 	@Column(name = "discount_amount", nullable = false)
+	@Builder.Default
 	private BigDecimal discountAmount = BigDecimal.ZERO;
 
 	@Column(name = "tax_amount", nullable = false)
+	@Builder.Default
 	private BigDecimal taxAmount = BigDecimal.ZERO;
 
 	// Total price for this item (unit price * quantity - discount + tax)
-	// This field is calculated and stored in the database for reporting purposes.
-	// It is not updated automatically when unit price, quantity, discount, or tax changes.
-	// This column is computed by the database itself. Sending a value from Hibernate would make Postgres reject the statement outright.
-	@Column(name = "line_total", nullable = false, updatable = false)
+	// This column is GENERATED ALWAYS AS (...) STORED in Postgres, so it's
+	// computed by the database itself. insertable = false AND updatable = false
+	// are both required — with only updatable = false, Hibernate would still
+	// send a value on INSERT and Postgres would reject the statement outright.
+	@Column(name = "line_total", insertable = false, updatable = false)
 	private BigDecimal lineTotal;
 
 	@Column(name = "created_at", nullable = false, updatable = false)

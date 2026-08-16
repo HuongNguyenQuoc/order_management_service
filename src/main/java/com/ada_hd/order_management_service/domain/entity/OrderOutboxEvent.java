@@ -2,6 +2,7 @@ package com.ada_hd.order_management_service.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -41,5 +42,6 @@ public class OrderOutboxEvent {
 	private Boolean published = false;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
+	@CreationTimestamp
 	private OffsetDateTime createdAt;
 }

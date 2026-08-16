@@ -36,7 +36,6 @@ public class OrderStatusHistory {
 	@Column(name = "from_status")
 	private OrderStatus fromStatus;
 
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "to_status", nullable = false)
 	private OrderStatus toStatus;
