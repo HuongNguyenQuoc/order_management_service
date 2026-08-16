@@ -53,6 +53,11 @@ public class OrderRefund {
 	@Column(name = "source_id", nullable = false)
 	private Long sourceId;
 
+	// The amount ACTUALLY processed for this refund transaction. Distinct
+	// from OrderReturnItem.refundAmount / OrderCancellationItem.refundAmount
+	// (the owed/estimated amount at approval time) — this can differ in
+	// practice (e.g. a processing fee deducted, or a partial payout), and
+	// only exists once a refund has actually been requested/approved.
 	@Column(name = "amount", nullable = false)
 	private BigDecimal amount;
 

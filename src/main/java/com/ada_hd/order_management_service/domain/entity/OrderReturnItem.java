@@ -63,6 +63,11 @@ public class OrderReturnItem {
 	@Column(name = "condition")
 	private ItemCondition condition;
 
+	// The amount OWED back for this item, computed once the return is
+	// reviewed (e.g. unit price x quantity, minus any restocking fee). This
+	// is a claim/estimate, not a completed transaction — the actual money
+	// movement (and the amount that was really sent, which can differ) is
+	// tracked separately in OrderRefund.amount.
 	@Column(name = "refund_amount", nullable = false)
 	@Builder.Default
 	private BigDecimal refundAmount = BigDecimal.ZERO;

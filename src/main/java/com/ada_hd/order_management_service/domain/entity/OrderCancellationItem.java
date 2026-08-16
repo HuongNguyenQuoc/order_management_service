@@ -62,6 +62,10 @@ public class OrderCancellationItem {
 	@Builder.Default
 	private Boolean refundRequired = false;
 
+	// The amount OWED back for this item, computed at cancellation time (only
+	// relevant when refundRequired = true). Same distinction as
+	// OrderReturnItem.refundAmount: this is a claim/estimate, not a completed
+	// transaction — the amount actually sent is tracked in OrderRefund.amount.
 	@Column(name = "refund_amount", nullable = false)
 	@Builder.Default
 	private BigDecimal refundAmount = BigDecimal.ZERO;
