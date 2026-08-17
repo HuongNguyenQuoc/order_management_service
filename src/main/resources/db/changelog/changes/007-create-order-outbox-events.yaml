@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-create-order-outbox-events
+      author: huong
+      changes:
+        - createTable:
+            tableName: order_outbox_events
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_outbox_order
+                    references: orders(id)
+              - column:
+                  name: event_type
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payload
+                  type: jsonb
+                  constraints:
+                    nullable: false
+              - column:
+                  name: published
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_outbox_unpublished
+            tableName: order_outbox_events
+            columns:
+              - column:
+                  name: published
+      rollback:
+        - dropTable:
+            tableName: order_outbox_events

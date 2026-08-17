@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-order-addresses
+      author: huong
+      changes:
+        - createTable:
+            tableName: order_addresses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: recipient_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: line1
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: line2
+                  type: varchar(255)
+              - column:
+                  name: ward
+                  type: varchar(100)
+              - column:
+                  name: district
+                  type: varchar(100)
+              - column:
+                  name: province
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: country_code
+                  type: varchar(2)
+                  defaultValue: VN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: postal_code
+                  type: varchar(20)
+              - column:
+                  name: source_address_id
+                  type: bigint
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: order_addresses

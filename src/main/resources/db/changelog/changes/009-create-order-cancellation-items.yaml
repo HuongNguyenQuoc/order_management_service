@@ -1,0 +1,78 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-create-order-cancellation-items
+      author: huong
+      changes:
+        - createTable:
+            tableName: order_cancellation_items
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_cancellation_items_order
+                    references: orders(id)
+              - column:
+                  name: order_item_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    unique: true
+                    foreignKeyName: fk_cancellation_items_order_item
+                    references: order_items(id)
+              - column:
+                  name: cancellation_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: cancelled_by_type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cancelled_by_id
+                  type: bigint
+              - column:
+                  name: reason_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason_text
+                  type: varchar(500)
+              - column:
+                  name: quantity_cancelled
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: refund_required
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: refund_amount
+                  type: numeric(14,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cancelled_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: order_cancellation_items

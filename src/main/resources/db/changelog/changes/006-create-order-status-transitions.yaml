@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-order-status-transitions
+      author: huong
+      changes:
+        - createTable:
+            tableName: order_status_transitions
+            columns:
+              - column:
+                  name: from_status
+                  type: varchar(30)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_transitions_from
+                    references: order_statuses(code)
+              - column:
+                  name: to_status
+                  type: varchar(30)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: fk_transitions_to
+                    references: order_statuses(code)
+      rollback:
+        - dropTable:
+            tableName: order_status_transitions

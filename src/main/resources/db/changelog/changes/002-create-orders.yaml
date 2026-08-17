@@ -1,0 +1,119 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-orders
+      author: huong
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: customer_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(30)
+                  defaultValue: PENDING
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_orders_status
+                    references: order_statuses(code)
+              - column:
+                  name: currency
+                  type: varchar(3)
+                  defaultValue: VND
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subtotal_amount
+                  type: numeric(14,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: discount_amount
+                  type: numeric(14,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shipping_fee
+                  type: numeric(14,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tax_amount
+                  type: numeric(14,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_amount
+                  type: numeric(14,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: shipping_address_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_orders_shipping_address
+                    references: order_addresses(id)
+              - column:
+                  name: billing_address_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_orders_billing_address
+                    references: order_addresses(id)
+              - column:
+                  name: placed_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: confirmed_at
+                  type: timestamptz
+              - column:
+                  name: shipped_at
+                  type: timestamptz
+              - column:
+                  name: delivered_at
+                  type: timestamptz
+              - column:
+                  name: version
+                  type: int
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: orders

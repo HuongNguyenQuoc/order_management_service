@@ -1,0 +1,82 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010-create-order-refunds
+      author: huong
+      changes:
+        - createTable:
+            tableName: order_refunds
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_refunds_order
+                    references: orders(id)
+              - column:
+                  name: source_type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: source_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: numeric(14,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: method
+                  type: varchar(50)
+              - column:
+                  name: status
+                  type: varchar(20)
+                  defaultValue: PENDING_APPROVAL
+                  constraints:
+                    nullable: false
+              - column:
+                  name: requested_by_type
+                  type: varchar(20)
+              - column:
+                  name: requested_by_id
+                  type: bigint
+              - column:
+                  name: approved_by_id
+                  type: bigint
+              - column:
+                  name: approved_at
+                  type: timestamptz
+              - column:
+                  name: rejected_reason
+                  type: varchar(500)
+              - column:
+                  name: processed_at
+                  type: timestamptz
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        # source_id has no real FK — polymorphic pointer to either
+        # order_return_items.id or order_cancellation_items.id depending on
+        # source_type, and Postgres can't FK one column to two tables
+        # conditionally. This composite unique constraint is the actual
+        # integrity guarantee: one refund per return-item or cancellation-item.
+        - addUniqueConstraint:
+            tableName: order_refunds
+            columnNames: source_type, source_id
+            constraintName: uq_refunds_source
+      rollback:
+        - dropTable:
+            tableName: order_refunds

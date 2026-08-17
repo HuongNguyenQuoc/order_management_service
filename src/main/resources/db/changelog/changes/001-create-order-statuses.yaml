@@ -1,0 +1,78 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-order-statuses
+      author: huong
+      changes:
+        - createTable:
+            tableName: order_statuses
+            columns:
+              - column:
+                  name: code
+                  type: varchar(30)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: label_vi
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sort_order
+                  type: int
+                  constraints:
+                    nullable: false
+        # Seed rows matching OrderStatus.java 1:1 — code must equal the enum
+        # constant name, since Order.status is stored via EnumType.STRING and
+        # (in the next changeset) FK's against this table's code column.
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: PENDING}
+              - column: {name: label_vi, value: "Chờ xác nhận"}
+              - column: {name: sort_order, value: 1}
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: CONFIRMED}
+              - column: {name: label_vi, value: "Đã xác nhận"}
+              - column: {name: sort_order, value: 2}
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: PROCESSING}
+              - column: {name: label_vi, value: "Đang xử lý"}
+              - column: {name: sort_order, value: 3}
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: SHIPPING}
+              - column: {name: label_vi, value: "Đang giao"}
+              - column: {name: sort_order, value: 4}
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: DELIVERED}
+              - column: {name: label_vi, value: "Đã giao"}
+              - column: {name: sort_order, value: 5}
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: CANCELLED}
+              - column: {name: label_vi, value: "Đã hủy"}
+              - column: {name: sort_order, value: 6}
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: RETURNED}
+              - column: {name: label_vi, value: "Đã trả hàng"}
+              - column: {name: sort_order, value: 7}
+        - insert:
+            tableName: order_statuses
+            columns:
+              - column: {name: code, value: REFUNDED}
+              - column: {name: label_vi, value: "Đã hoàn tiền"}
+              - column: {name: sort_order, value: 8}
+      rollback:
+        - dropTable:
+            tableName: order_statuses

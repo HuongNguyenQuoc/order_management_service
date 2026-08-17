@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-order-status-history
+      author: huong
+      changes:
+        - createTable:
+            tableName: order_status_history
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_status_history_order
+                    references: orders(id)
+              - column:
+                  name: from_status
+                  type: varchar(30)
+              - column:
+                  name: to_status
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by_type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by_id
+                  type: bigint
+              - column:
+                  name: reason
+                  type: varchar(500)
+              - column:
+                  name: metadata
+                  type: jsonb
+              - column:
+                  name: created_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: order_status_history
