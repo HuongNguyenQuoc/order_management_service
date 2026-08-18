@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      id: 012-seed-order-status-transitions
+      author: huong
+      changes:
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: PENDING}
+              - column: {name: to_status, value: CONFIRMED}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: PENDING}
+              - column: {name: to_status, value: CANCELLED}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: CONFIRMED}
+              - column: {name: to_status, value: PROCESSING}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: CONFIRMED}
+              - column: {name: to_status, value: CANCELLED}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: PROCESSING}
+              - column: {name: to_status, value: SHIPPING}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: PROCESSING}
+              - column: {name: to_status, value: CANCELLED}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: SHIPPING}
+              - column: {name: to_status, value: DELIVERED}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: DELIVERED}
+              - column: {name: to_status, value: RETURNED}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: RETURNED}
+              - column: {name: to_status, value: REFUNDED}
+        - insert:
+            tableName: order_status_transitions
+            columns:
+              - column: {name: from_status, value: CANCELLED}
+              - column: {name: to_status, value: REFUNDED}
+      rollback:
+        - delete:
+            tableName: order_status_transitions

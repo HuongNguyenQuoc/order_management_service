@@ -1,5 +1,6 @@
-package com.ada_hd.order_management_service.domain.entity;
+package com.ada_hd.order_management_service.repository;
 
+import com.ada_hd.order_management_service.domain.entity.OrderReturnRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
