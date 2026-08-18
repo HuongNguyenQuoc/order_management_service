@@ -1,0 +1,178 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011-return-requests-and-cancellations
+      author: huong
+      changes:
+        # 1. New header table for return requests.
+        - createTable:
+            tableName: order_return_requests
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_return_requests_order
+                    references: orders(id)
+              - column:
+                  name: rma_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: status
+                  type: varchar(20)
+                  defaultValue: REQUESTED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason_text
+                  type: varchar(500)
+              - column:
+                  name: return_tracking_number
+                  type: varchar(100)
+              - column:
+                  name: requested_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: approved_at
+                  type: timestamptz
+              - column:
+                  name: resolved_at
+                  type: timestamptz
+
+        # 2. order_return_items no longer enforces "one item = one return,
+        # globally" — drop that constraint before adding the new one.
+        - dropUniqueConstraint:
+            tableName: order_return_items
+            constraintName: order_return_items_order_item_id_key
+
+        # 3. Link each existing detail row to its (new) header.
+        - addColumn:
+            tableName: order_return_items
+            columns:
+              - column:
+                  name: return_request_id
+                  type: bigint
+
+        - addNotNullConstraint:
+            tableName: order_return_items
+            columnName: return_request_id
+            columnDataType: bigint
+
+        - addForeignKeyConstraint:
+            baseTableName: order_return_items
+            baseColumnNames: return_request_id
+            referencedTableName: order_return_requests
+            referencedColumnNames: id
+            constraintName: fk_return_items_return_request
+
+        - addUniqueConstraint:
+            tableName: order_return_items
+            columnNames: return_request_id, order_item_id
+            constraintName: uq_return_items_request_item
+
+        # 4. Drop the columns that moved up to order_return_requests.
+        - dropColumn:
+            tableName: order_return_items
+            columns:
+              - column:
+                  name: rma_code
+              - column:
+                  name: status
+              - column:
+                  name: reason_code
+              - column:
+                  name: reason_text
+              - column:
+                  name: requested_at
+              - column:
+                  name: resolved_at
+              - column:
+                  name: order_id
+
+        # 5. Cancellation becomes order-level: one row per order, ever.
+        - createTable:
+            tableName: order_cancellations
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    unique: true
+                    foreignKeyName: fk_cancellations_order
+                    references: orders(id)
+              - column:
+                  name: cancellation_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: cancelled_by_type
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cancelled_by_id
+                  type: bigint
+              - column:
+                  name: reason_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason_text
+                  type: varchar(500)
+              - column:
+                  name: refund_required
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: refund_amount
+                  type: numeric(14,2)
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cancelled_at
+                  type: timestamptz
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+
+        # 6. Drop the old item-level cancellation table entirely.
+        - dropTable:
+            tableName: order_cancellation_items
+
+      rollback:
+        - dropTable:
+            tableName: order_cancellations
+        - dropTable:
+            tableName: order_return_requests

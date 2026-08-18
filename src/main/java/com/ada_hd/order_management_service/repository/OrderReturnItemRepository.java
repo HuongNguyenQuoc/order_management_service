@@ -7,12 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderReturnItemRepository extends JpaRepository<OrderReturnItem, Long> {
-	// An order can have many returns over its lifetime (one per item) — see
-	// project_return_refund_cardinality memory. List, not Optional.
-	List<OrderReturnItem> findByOrderId(Long orderId);
+	List<OrderReturnItem> findByOrderReturnRequestId(Long orderReturnRequestId);
 
-	// orderItemId is unique = true: at most one return per item, ever.
-	Optional<OrderReturnItem> findByOrderItemId(Long orderItemId);
-
-	Optional<OrderReturnItem> findByRmaCode(String rmaCode);
+	// Not unique anymore — the same item can be covered by more than one
+	// return request over its lifetime.
+	List<OrderReturnItem> findByOrderItemId(Long orderItemId);
 }

@@ -19,3 +19,5 @@ databaseChangeLog:
       file: db/changelog/changes/009-create-order-cancellation-items.yaml
   - include:
       file: db/changelog/changes/010-create-order-refunds.yaml
+  - include:
+      file: db/changelog/changes/011-return-requests-and-cancellations.yaml

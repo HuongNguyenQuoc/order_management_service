@@ -1,16 +1,11 @@
 package com.ada_hd.order_management_service.domain.entity;
 
 // Maps to order_refunds — the actual money-movement transaction, separate
-// from order_cancellation_items/order_return_items because "refund owed" is
+// from order_return_requests/order_cancellations because "refund owed" is
 // a different fact from "refund approved and money actually sent", which
 // needs its own approval workflow.
-// This is deliberately item-level, not order-level: sourceId points at ONE
-// OrderReturnItem or OrderCancellationItem row (never at "the order" as a
-// whole), so amount always reflects a single product's refund, never an
-// aggregate across the order. order_id is NOT unique: an order can have
-// many items, each producing its own refund. The (source_type, source_id)
-// pair is what's actually unique — it stops the same return-item or
-// cancellation-item from ever generating two refund rows.
+// sourceId points at ONE OrderReturnRequest or OrderCancellation row — one
+// return event or one order-cancellation event, depending on sourceType.
 
 import com.ada_hd.order_management_service.domain.enums.ActorType;
 import com.ada_hd.order_management_service.domain.enums.RefundSourceType;
@@ -45,11 +40,10 @@ public class OrderRefund {
 	@Column(name = "source_type", nullable = false)
 	private RefundSourceType sourceType;
 
-	// Polymorphic: points to order_cancellation_items.id OR
-	// order_return_items.id depending on sourceType — i.e. one specific
-	// product's return/cancellation, never the whole order. There's no real
-	// FK possible here at the DB level — one column can't reference two
-	// different tables conditionally.
+	/// Polymorphic: points to order_return_requests.id when sourceType = RETURN,
+// or order_cancellations.id when sourceType = CANCELLATION. There's no real
+// FK possible here at the DB level — one column can't reference two
+// different tables conditionally.
 	@Column(name = "source_id", nullable = false)
 	private Long sourceId;
 
